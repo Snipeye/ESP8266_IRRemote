@@ -1,0 +1,64 @@
+@font-face {
+    font-family: 'mi';
+    src: url(http://cdn.materialdesignicons.com/4.2.95/fonts/materialdesignicons-webfont.woff2?v=4.2.95) format('woff2');
+}
+body, html {
+    padding:0px;
+    margin:0px;
+    height:100%;
+    width:100%;
+    background-color: #CCC;
+    overflow: hidden;
+}
+rb {
+    display: grid;
+    width:100%;
+    max-width:960px;
+    height:100%;
+    max-height:1690px;
+    padding:0px;
+    margin:20px;
+    grid-template: repeat(21, 1fr) / repeat(12, 1fr);
+    grid-auto-flow: row;
+    justify-content: center;
+    align-content: center;
+    grid-gap: 20px;
+}
+rb a {
+    font-family: sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    place-self: stretch;
+    color: black;
+    text-decoration: none;
+    border-radius:25px;
+}
+rb a[i] {
+    font-family: 'mi';
+}
+rb a[x2] {
+    font-size: 60px;
+    grid-column-end: span 2;
+    grid-row-end: span 2;
+}
+rb a[x3] {
+    font-size: 80px;
+    grid-column-end: span 3;
+    grid-row-end: span 3;
+}
+rb a[x4] {
+    font-size: 100px;
+    grid-column-end: span 4;
+    grid-row-end: span 4;
+}
+rb a[p] {
+    background-color: #AAE;
+}
+rb a[l] {
+    background-color: #DDD;
+}
+rb a[d] {
+    background-color: #333;
+    color: #FFF;
+}
