@@ -7,7 +7,6 @@ whenConnected = null;
 
 window.addEventListener('load', () => {
     webSocketConnect();
-    webSocketDetail();
     rebuildUI();
 });
 
@@ -107,6 +106,7 @@ function webSocketConnect() {
     } else {
         connection = new WebSocket('wss://echo.websocket.org');
     }
+    webSocketDetail();
 }
 
 function webSocketDetail() {
