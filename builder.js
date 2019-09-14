@@ -16,15 +16,15 @@ navOptions = {
         [2, 1, 3, ["light","icon"], "l09", "&#xf75e;"], // Mute
         [2, 1, 5, ["light","icon"], "l03", "&#xf580;"], // Vol Down
         [2, 1, 7, ["light","icon"], "l02", "&#xf57e;"], // Vol Up
-        [2, 1, 9, ["power","icon"], "lc5_1s2f_1p2f_3", "&#xf426;"], // All Power Off
+        [2, 1, 9, ["power","icon"], "lc5_1*1s2f_1*1p2f_3", "&#xf426;"], // All Power Off
         [2, 1, 11, ["power","icon"], "l08", "&#xf425;"], // TV Power Toggle
 
         //[3, 3, 1, ["dark","icon"], "le9lc4*1p2f_1*4le9", "&#xf035;", "apple"], // Apple TV
         [3, 3, 1, ["dark","icon"], null, "&#xf035;", "apple"], // Apple TV
         //[3, 3, 4, ["dark","icon"], "lcclc4*1s2e_1*5lcc", "&#xf95f;", "bluray"], // Bluray
         [3, 3, 4, ["dark","icon"], null, "&#xf95f;", "bluray"], // Bluray
-        [3, 3, 7, ["dark","icon"], "ldalc4*5lda", "&#xf7e0;"], // HDMI
-        [3, 3, 10, ["dark","icon"], "ldalc4*5lda", "&#xf840;"], // Switch
+        [3, 3, 7, ["dark","icon"], "lda", "&#xf7e0;"], // HDMI
+        [3, 3, 10, ["dark","icon"], "lda", "&#xf840;"], // Switch
 
         [4, 6, 5, ["light","icon"], "l40", "&#xf736;"], // Up
         [4, 10, 1, ["light","icon"], "l07", "&#xf730;"], // Left
@@ -63,7 +63,7 @@ navOptions = {
         [4, 14, 5, ["light","icon"], "p06", "&#xf72d;"], // Down
         [4, 10, 5, ["dark", "icon"], "p2e", "&#10022;"], // Enter
 
-        [2, 14, 3, ["light","icon"], "l43", "&#xf493;"], // Menu
+        [2, 14, 3, ["light","icon"], "p01", "&#xf493;"], // Menu
         [2, 14, 9, ["light","icon"], "p2f", "&#xf40e;"], // Play/Pause
 
         [2, 20, 11, ["power","icon"], "le9", "&#xfd1c;"], // Choose Input
@@ -74,7 +74,7 @@ navOptions = {
         [2, 1, 5, ["light","icon"], "l03", "&#xf580;"], // Vol Down
         [2, 1, 7, ["light","icon"], "l02", "&#xf57e;"], // Vol Up
         [2, 1, 9, ["power","icon"], "l08", "&#xf903;"], // TV Power Toggle (Sleep Icon)
-        [2, 1, 11, ["power","icon"], "s15", "&#xf425;"], // Apple TV Sleep
+        [2, 1, 11, ["power","icon"], "s15", "&#xf425;"], // Blu-ray Power Toggle
 
         [4, 6, 5, ["light","icon"], "s39", "&#xf736;"], // Up
         [4, 10, 1, ["light","icon"], "s3b", "&#xf730;"], // Left
@@ -118,7 +118,8 @@ function webSocketDetail() {
       }
     };
     connection.onerror = (error) => {
-        alert("Connection Error: " + JSON.stringify(error));
+        isConnected = false;
+        //alert("Connection Error: " + JSON.stringify(error));
     };
     connection.onmessage = (e) => {
       if (webSocketResponseFunction) {
@@ -133,10 +134,15 @@ function webSocketDetail() {
 
 function sendCodeStart(str) {
     if (isConnected) {
-        connection.send("+" + str);
-    } else {
-        whenConnected = function() {
+        try {
             connection.send("+" + str);
+        catch (problem) {
+            isConnected = false;
+        }
+    }
+    if (!isConnected) {
+        whenConnected = function() {
+            sendCodeStart(str);
         }
         webSocketConnect();
     }
@@ -144,10 +150,15 @@ function sendCodeStart(str) {
 
 function sendCodeEnd(str) {
     if (isConnected) {
-        connection.send("-" + str);
-    } else {
-        whenConnected = function() {
+        try {
             connection.send("-" + str);
+        catch (problem) {
+            isConnected = false;
+        }
+    }
+    if (!isConnected) {
+        whenConnected = function() {
+            sendCodeEnd(str);
         }
         webSocketConnect();
     }
