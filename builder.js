@@ -136,7 +136,7 @@ function sendCodeStart(str) {
     if (isConnected) {
         try {
             connection.send("+" + str);
-        catch (problem) {
+        } catch (problem) {
             isConnected = false;
         }
     }
@@ -152,7 +152,7 @@ function sendCodeEnd(str) {
     if (isConnected) {
         try {
             connection.send("-" + str);
-        catch (problem) {
+        } catch (problem) {
             isConnected = false;
         }
     }
