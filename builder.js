@@ -4,6 +4,10 @@ connection = null;
 webSocketResponseFunction = null;
 currentBuild = null;
 whenConnected = null;
+webSocketQueue = [];
+rebuildQueue = [];
+queueCheckTimeout = null;
+currentlySent = null;
 
 window.addEventListener('load', () => {
     webSocketConnect();
@@ -13,48 +17,48 @@ window.addEventListener('load', () => {
 navOptions = {
     //[size, row, col, style, ir, inside, nav]
     "tv": [
-        [2, 1, 3, ["light","icon"], "l09", "&#xf75e;"], // Mute
-        [2, 1, 5, ["light","icon"], "l03", "&#xf580;"], // Vol Down
-        [2, 1, 7, ["light","icon"], "l02", "&#xf57e;"], // Vol Up
-        [2, 1, 9, ["power","icon"], "lc5_1*1s2f_1*1p2f_3", "&#xf426;"], // All Power Off
-        [2, 1, 11, ["power","icon"], "l08", "&#xf425;"], // TV Power Toggle
+        [2, 1, 3, ["light","icon"], "t14", "&#xf75e;"], // Mute
+        [2, 1, 5, ["light","icon"], "t13", "&#xf580;"], // Vol Down
+        [2, 1, 7, ["light","icon"], "t12", "&#xf57e;"], // Vol Up
+        [2, 1, 9, ["power","icon"], "t2f_1*1s2f_1*1p2f_3", "&#xf426;"], // All Power Off
+        [2, 1, 11, ["power","icon"], "t15", "&#xf425;"], // TV Power Toggle
 
         //[3, 3, 1, ["dark","icon"], "le9lc4*1p2f_1*4le9", "&#xf035;", "apple"], // Apple TV
         [3, 3, 1, ["dark","icon"], null, "&#xf035;", "apple"], // Apple TV
         //[3, 3, 4, ["dark","icon"], "lcclc4*1s2e_1*5lcc", "&#xf95f;", "bluray"], // Bluray
         [3, 3, 4, ["dark","icon"], null, "&#xf95f;", "bluray"], // Bluray
-        [3, 3, 7, ["dark","icon"], "lda", "&#xf7e0;"], // HDMI
-        [3, 3, 10, ["dark","icon"], "lda", "&#xf840;"], // Switch
+        [3, 3, 7, ["dark","icon"], "h5c", "&#xf7e0;"], // HDMI
+        [3, 3, 10, ["dark","icon"], "h5d", "&#xf840;"], // Switch
 
-        [4, 6, 5, ["light","icon"], "l40", "&#xf736;"], // Up
-        [4, 10, 1, ["light","icon"], "l07", "&#xf730;"], // Left
-        [4, 10, 9, ["light","icon"], "l06", "&#xf733;"], // Right
-        [4, 14, 5, ["light","icon"], "l41", "&#xf72d;"], // Down
-        [4, 10, 5, ["dark", "icon"], "l44", "&#10022;"], // Enter
+        [4, 6, 5, ["light","icon"], "t74", "&#xf736;"], // Up
+        [4, 10, 1, ["light","icon"], "t34", "&#xf730;"], // Left
+        [4, 10, 9, ["light","icon"], "t33", "&#xf733;"], // Right
+        [4, 14, 5, ["light","icon"], "t75", "&#xf72d;"], // Down
+        [4, 10, 5, ["dark", "icon"], "t65", "&#10022;"], // Enter
 
-        [2, 8, 3, ["light","icon"], "l43", "&#xf493;"], // Menu
-        [2, 8, 9, ["light","icon"], "l28", "&#xf311;"], // Back
-        [2, 14, 3, ["light","icon"], "ldc", "&#xf7fc;"], // 3D
-        [2, 14, 9, ["light","icon"], "l5b", "&#xffe5;"], // Exit
+        [2, 8, 3, ["light","icon"], "t60", "&#xf493;"], // Menu
+        [2, 8, 9, ["light","icon"], "t63", "&#xf311;"], // Back
+        //[2, 14, 3, ["light","icon"], "ldc", "&#xf7fc;"], // 3D
+        //[2, 14, 9, ["light","icon"], "l5b", "&#xffe5;"], // Exit
 
         //Numbers:
-        [2, 18, 1, ["dark"], "l10", "0"],
-        [2, 18, 3, ["dark"], "l11", "1"],
-        [2, 18, 5, ["dark"], "l12", "2"],
-        [2, 18, 7, ["dark"], "l13", "3"],
-        [2, 18, 9, ["dark"], "l14", "4"],
-        [2, 20, 1, ["dark"], "l15", "5"],
-        [2, 20, 3, ["dark"], "l16", "6"],
-        [2, 20, 5, ["dark"], "l17", "7"],
-        [2, 20, 7, ["dark"], "l18", "8"],
-        [2, 20, 9, ["dark"], "l19", "9"]
+        [2, 18, 1, ["dark"], "t09", "0"],
+        [2, 18, 3, ["dark"], "t00", "1"],
+        [2, 18, 5, ["dark"], "t01", "2"],
+        [2, 18, 7, ["dark"], "t02", "3"],
+        [2, 18, 9, ["dark"], "t03", "4"],
+        [2, 20, 1, ["dark"], "t04", "5"],
+        [2, 20, 3, ["dark"], "t05", "6"],
+        [2, 20, 5, ["dark"], "t06", "7"],
+        [2, 20, 7, ["dark"], "t07", "8"],
+        [2, 20, 9, ["dark"], "t08", "9"]
     ],
     "apple": [
         [2, 1, 1, ["dark","icon"], null, "&#xf141;", "tv"], // Back to TV
-        [2, 1, 3, ["light","icon"], "l09", "&#xf75e;"], // Mute
-        [2, 1, 5, ["light","icon"], "l03", "&#xf580;"], // Vol Down
-        [2, 1, 7, ["light","icon"], "l02", "&#xf57e;"], // Vol Up
-        [2, 1, 9, ["power","icon"], "l08", "&#xf903;"], // TV Power Toggle (Sleep Icon)
+        [2, 1, 3, ["light","icon"], "t14", "&#xf75e;"], // Mute
+        [2, 1, 5, ["light","icon"], "t13", "&#xf580;"], // Vol Down
+        [2, 1, 7, ["light","icon"], "t12", "&#xf57e;"], // Vol Up
+        [2, 1, 9, ["power","icon"], "t15", "&#xf903;"], // TV Power Toggle (Sleep Icon)
         [2, 1, 11, ["power","icon"], "p2f_3", "&#xf425;"], // Apple TV Sleep
 
         [4, 6, 5, ["light","icon"], "p05", "&#xf736;"], // Up
@@ -66,14 +70,14 @@ navOptions = {
         [2, 14, 3, ["light","icon"], "p01", "&#xf493;"], // Menu
         [2, 14, 9, ["light","icon"], "p2f", "&#xf40e;"], // Play/Pause
 
-        [2, 20, 11, ["power","icon"], "le9", "&#xfd1c;"], // Choose Input
+        [2, 20, 11, ["power","icon"], "h5b", "&#xfd1c;"], // Choose Input
     ],
     "bluray": [
         [2, 1, 1, ["dark","icon"], null, "&#xf141;", "tv"], // Back to TV
-        [2, 1, 3, ["light","icon"], "l09", "&#xf75e;"], // Mute
-        [2, 1, 5, ["light","icon"], "l03", "&#xf580;"], // Vol Down
-        [2, 1, 7, ["light","icon"], "l02", "&#xf57e;"], // Vol Up
-        [2, 1, 9, ["power","icon"], "l08", "&#xf903;"], // TV Power Toggle (Sleep Icon)
+        [2, 1, 3, ["light","icon"], "t14", "&#xf75e;"], // Mute
+        [2, 1, 5, ["light","icon"], "t13", "&#xf580;"], // Vol Down
+        [2, 1, 7, ["light","icon"], "t12", "&#xf57e;"], // Vol Up
+        [2, 1, 9, ["power","icon"], "t15", "&#xf903;"], // TV Power Toggle (Sleep Icon)
         [2, 1, 11, ["power","icon"], "s15", "&#xf425;"], // Blu-ray Power Toggle
 
         [4, 6, 5, ["light","icon"], "s39", "&#xf736;"], // Up
@@ -96,7 +100,7 @@ navOptions = {
         [2, 20, 5, ["dark","icon"], "s42", "&#xf2dc;"], // Home
         [2, 20, 7, ["dark","icon"], "s16", "&#xf1ea;"], // Eject
 
-        [2, 20, 11, ["power","icon"], "lcc", "&#xfd1c;"], // Choose Input
+        [2, 20, 11, ["power","icon"], "h5a", "&#xfd1c;"], // Choose Input
     ]
 };
 
@@ -122,46 +126,53 @@ function webSocketDetail() {
         //alert("Connection Error: " + JSON.stringify(error));
     };
     connection.onmessage = (e) => {
-      if (webSocketResponseFunction) {
-          webSocketResponseFunction();
-          webSocketResponseFunction = null;
-      }
+        if (webSocketQueue.length) {
+            if (e.data == currentlySent) {
+                webSocketQueue.splice(0, 1);
+                currentlySent = null;
+                clearTimeout(queueCheckTimeout);
+            }
+        }
+        if (webSocketResponseFunction) {
+            webSocketResponseFunction();
+            webSocketResponseFunction = null;
+        }
+        if (webSocketQueue.length) {
+            checkQueue();
+        }
     };
     connection.onclose = () => {
       isConnected = false;
     };
 }
 
-function sendCodeStart(str) {
-    if (isConnected) {
-        try {
-            connection.send("+" + str);
-        } catch (problem) {
-            isConnected = false;
+function sendCode(str) {
+    webSocketQueue.push(str);
+    checkQueue();
+}
+
+function checkQueue() {
+    if (webSocketQueue.length && !currentlySent) {
+        if (isConnected) {
+            try {
+                connection.send(webSocketQueue[0]);
+                currentlySent = webSocketQueue[0];
+                queueCheckTimeout = setTimeout(problemAlert, 1000);
+            } catch (problem) {
+                isConnected = false;
+                currentlySent = null;
+                clearTimeout(queueCheckTimeout);
+            }
         }
-    }
-    if (!isConnected) {
-        whenConnected = function() {
-            sendCodeStart(str);
+        if (!isConnected) {
+            whenConnected = checkQueue;
         }
-        webSocketConnect();
     }
 }
 
-function sendCodeEnd(str) {
-    if (isConnected) {
-        try {
-            connection.send("-" + str);
-        } catch (problem) {
-            isConnected = false;
-        }
-    }
-    if (!isConnected) {
-        whenConnected = function() {
-            sendCodeEnd(str);
-        }
-        webSocketConnect();
-    }
+function problemAlert() {
+    alert("Unable to reach device. Please reset the remote control and restart the app.");
+    clearTimeout(queueCheckTimeout);
 }
 
 function touchStart(event) {
@@ -169,7 +180,7 @@ function touchStart(event) {
     var myLink = event.srcElement;
     var ir = myLink.getAttribute("ir");
     if (ir) {
-        sendCodeStart(myLink.getAttribute("ir"));
+        sendCode("+"+myLink.getAttribute("ir"));
     }
 }
 
@@ -179,22 +190,26 @@ function touchEnd(event) {
     var ir = myLink.getAttribute("ir");
     var shouldWait = false;
     if (ir) {
-        sendCodeEnd(myLink.getAttribute("ir"));
+        sendCode("-"+myLink.getAttribute("ir"));
         shouldWait = true;
     }
     let nav = myLink.getAttribute("nav");
     if (nav) {
+        rebuildQueue.push(nav);
         if (shouldWait) {
-            webSocketResponseFunction = function() {
-                rebuildUI(nav)
-            }
+            webSocketResponseFunction = rebuildUI;
         } else {
-            rebuildUI(nav)
+            rebuildUI();
         }
     }
 }
 
-function rebuildUI(nav) {
+function rebuildUI() {
+    let nav = null;
+    if (rebuildQueue.length) {
+        nav = rebuildQueue[0];
+        rebuildQueue.splice(0,1);
+    }
     var useNav = '';
     if (nav == null || nav == undefined || !navOptions.hasOwnProperty(nav)) {
         useNav = "tv";
@@ -210,6 +225,9 @@ function rebuildUI(nav) {
         for (var i=0; i<toBuild.length; i++) {
             buildButton(toBuild[i]);
         }
+    }
+    if (rebuildQueue.length) {
+        rebuildUI();
     }
 }
 
