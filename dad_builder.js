@@ -120,12 +120,11 @@ navOptions = {
 };
 
 function webSocketConnect() {
-    connection = new WebSocket('ws://remotecontrol.local:81/', ['arduino']);
-    // if (location.hostname != '') {
-    //     connection = new WebSocket('ws://' + location.hostname + ':81/', ['arduino']);
-    // } else {
-    //     connection = new WebSocket('wss://echo.websocket.org');
-    // }
+    if (location.hostname != '') {
+        connection = new WebSocket('ws://' + location.hostname + ':81/', ['arduino']);
+    } else {
+        connection = new WebSocket('wss://echo.websocket.org');
+    }
     webSocketDetail();
 }
 
