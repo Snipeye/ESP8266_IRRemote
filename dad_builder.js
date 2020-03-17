@@ -37,7 +37,7 @@ navOptions = {
         [2, 1, 7, ["light","icon"], "oa8", "&#xf57e;"], // Vol Up
         [2, 1, 9, ["power","icon"], "p2f_3", "&#xf425;"], // Apple TV Sleep
         [2, 1, 11, ["power","icon"], "t15", "&#xf502;"], // TV Power Toggle (TV Icon)
-
+        [2, 3, 1, ["light","icon"], "p01","p"],
         [4, 6, 5, ["light","icon"], "p05", "&#xf736;"], // Up
         [4, 10, 1, ["light","icon"], "p04", "&#xf730;"], // Left
         [4, 10, 9, ["light","icon"], "p03", "&#xf733;"], // Right
@@ -83,7 +83,7 @@ navOptions = {
         [2, 1, 3, ["light","icon"], "o48", "&#xf75e;"], // Mute
         [2, 1, 5, ["light","icon"], "o68", "&#xf580;"], // Vol Down
         [2, 1, 7, ["light","icon"], "oa8", "&#xf57e;"], // Vol Up
-        [2, 1, 9, ["power","icon"], null, "&#xf425;"], // Onkyo Power Toggle
+        [2, 1, 9, ["power","icon"], "k04", "&#xf425;"], // Onkyo Power Toggle
         [2, 1, 11, ["power","icon"], "t15", "&#xf502;"], // TV Power Toggle (TV Icon)
 
         [4, 4, 5, ["light","icon"], "k1b", "&#xf40a;"], // Play
@@ -113,16 +113,19 @@ navOptions = {
         [2, 16, 11, ["dark","icon"], "k0e", "&#xf1be;"], // > 10
         [2, 18, 11, ["dark","icon"], "k08", "&#xf15a;"], // Clear
 
+        [2, 16, 9, ["light","icon"], "k4a", "&#xf6e8;"], // Dimmer
+
         [2, 20, 11, ["power","icon"], "ob2", "&#xfd1c;"] // Choose Input
     ]
 };
 
 function webSocketConnect() {
-    if (location.hostname != '') {
-        connection = new WebSocket('ws://' + location.hostname + ':81/', ['arduino']);
-    } else {
-        connection = new WebSocket('wss://echo.websocket.org');
-    }
+    connection = new WebSocket('ws://remotecontrol.local:81/', ['arduino']);
+    // if (location.hostname != '') {
+    //     connection = new WebSocket('ws://' + location.hostname + ':81/', ['arduino']);
+    // } else {
+    //     connection = new WebSocket('wss://echo.websocket.org');
+    // }
     webSocketDetail();
 }
 
