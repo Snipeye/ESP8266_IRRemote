@@ -37,7 +37,7 @@ navOptions = {
         [2, 1, 7, ["light","icon"], "oa8", "&#xf57e;"], // Vol Up
         [2, 1, 9, ["power","icon"], "p2f_3", "&#xf425;"], // Apple TV Sleep
         [2, 1, 11, ["power","icon"], "t15", "&#xf502;"], // TV Power Toggle (TV Icon)
-        [2, 3, 1, ["light","icon"], "p01","p"],
+        //[2, 3, 1, ["light","icon"], "p01","p"], // Pair button, rarely needed
         [4, 6, 5, ["light","icon"], "p05", "&#xf736;"], // Up
         [4, 10, 1, ["light","icon"], "p04", "&#xf730;"], // Left
         [4, 10, 9, ["light","icon"], "p03", "&#xf733;"], // Right
