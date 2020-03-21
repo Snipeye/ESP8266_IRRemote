@@ -134,8 +134,9 @@ function webSocketDetail() {
         console.log("open!");
       isConnected = true;
       if (whenConnected != null) {
-          whenConnected();
+          var temp = whenConnected;
           whenConnected = null;
+          temp();
       }
     };
     connection.onerror = (error) => {
@@ -153,8 +154,9 @@ function webSocketDetail() {
             }
         }
         if (webSocketResponseFunction) {
-            webSocketResponseFunction();
+            var temp = webSocketResponseFunction;
             webSocketResponseFunction = null;
+            temp();
         }
         if (webSocketQueue.length) {
             checkQueue();
@@ -186,6 +188,7 @@ function checkQueue() {
         }
         if (!isConnected) {
             whenConnected = checkQueue;
+            webSocketConnection();
         }
     }
 }
