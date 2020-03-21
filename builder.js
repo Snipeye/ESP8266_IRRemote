@@ -117,8 +117,9 @@ function webSocketDetail() {
     connection.onopen = () => {
       isConnected = true;
       if (whenConnected != null) {
-          whenConnected();
+          var temp = whenConnected;
           whenConnected = null;
+          temp();
       }
     };
     connection.onerror = (error) => {
@@ -166,6 +167,7 @@ function checkQueue() {
         }
         if (!isConnected) {
             whenConnected = checkQueue;
+            webSocketConnect();
         }
     }
 }
