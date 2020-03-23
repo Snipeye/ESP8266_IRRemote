@@ -188,7 +188,7 @@ function checkQueue() {
         }
         if (!isConnected) {
             whenConnected = checkQueue;
-            webSocketConnection();
+            webSocketConnect();
         }
     }
 }
